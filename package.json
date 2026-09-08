@@ -1,0 +1,15 @@
+{
+  "name": "telegram-media-cleaner",
+  "version": "1.0.0",
+  "description": "Cleanup incorrectly classified Telegram media from MongoDB and Backblaze B2",
+  "main": "src/cleanup.js",
+  "scripts": {
+    "dry-run": "node src/cleanup.js --dry-run",
+    "cleanup": "node src/cleanup.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.0.0",
+    "dotenv": "^17.0.0",
+    "mongoose": "^9.0.0"
+  }
+}
