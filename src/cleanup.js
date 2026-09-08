@@ -1,10 +1,6 @@
 require("dotenv").config();
 
 
-const readline =
-    require("readline");
-
-
 const {
     connectToDatabase,
     disconnectFromDatabase,
@@ -32,9 +28,6 @@ const TARGET_MEDIA_TYPE =
 const TARGET_MIME_TYPE =
     "video/webm";
 
-const REQUIRED_CONFIRMATION =
-    "DELETE";
-
 
 /*
 |--------------------------------------------------------------------------
@@ -45,37 +38,6 @@ const REQUIRED_CONFIRMATION =
 function printLine() {
     console.log(
         "========================================"
-    );
-}
-
-
-/*
- * Ask user for confirmation.
- */
-function askConfirmation() {
-    return new Promise(
-        (resolve) => {
-            const rl =
-                readline.createInterface({
-                    input:
-                        process.stdin,
-
-                    output:
-                        process.stdout,
-                });
-
-
-            rl.question(
-                "\nType DELETE to continue: ",
-                (answer) => {
-                    rl.close();
-
-                    resolve(
-                        answer.trim()
-                    );
-                }
-            );
-        }
     );
 }
 
@@ -307,8 +269,6 @@ async function deleteMessage(
 
 
             /*
-             * IMPORTANT:
-             *
              * Do NOT delete MongoDB record
              * if B2 deletion failed.
              */
@@ -557,36 +517,13 @@ async function main() {
 
 
         /*
-         * Ask for explicit confirmation.
+         * Start cleanup directly.
          */
-        const confirmation =
-            await askConfirmation();
-
-
-        if (
-            confirmation !==
-            REQUIRED_CONFIRMATION
-        ) {
-            console.log(
-                "\nCleanup cancelled."
-            );
-
-            return;
-        }
-
-
         console.log(
-            "\nConfirmation accepted."
-        );
-
-        console.log(
-            "Starting cleanup..."
+            "\nStarting cleanup..."
         );
 
 
-        /*
-         * Delete messages.
-         */
         const result =
             await deleteMessages(
                 messages
@@ -627,6 +564,9 @@ async function main() {
         printLine();
 
 
+        /*
+         * Check remaining messages.
+         */
         const remaining =
             await Message.countDocuments({
                 "media.type":
@@ -661,6 +601,7 @@ async function main() {
          */
         try {
             await disconnectFromDatabase();
+
         } catch (error) {
             console.error(
                 "Failed to disconnect from MongoDB:"
